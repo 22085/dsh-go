@@ -114,7 +114,7 @@
 +		this.ctx.get("sessionPersistence")?.dshGoDeletion?.assertAdmit(id);
  		const carrier = scopeTarget(session, scopeOf(this.ctx));
  		if (this.store.has(id)) throw new Error(`session "${id}" already exists`);
- 		if (attachments.has(session)) throw new Error(`session "${id}" is already attached to a store`);
+ 		if (attachments.get(session) != null) throw new Error(`session "${id}" is already attached to a store`);
 --- a/node_modules/@deepseek-ai/dsh-agent-loop/lib/index.js
 +++ b/node_modules/@deepseek-ai/dsh-agent-loop/lib/index.js
 @@ -798,6 +798,8 @@
@@ -144,9 +144,10 @@
  		if (this.phase.kind !== "idle") {
  			if (abortedCancelCause(this.phase.abort.signal)?.kind !== "disposed" && (this.phase.kind === "maintenance" || wakeAfterAbort)) this.phase.wakeRequested = true;
  			return;
-@@ -1678,7 +1684,21 @@
- 	* BEFORE publication, so a mid-setup unload rolls everything back; `signal`
- 	* fuses caller cancellation with lifecycle teardown for setup awaits.
+@@ -1451,7 +1451,21 @@
+ 	* @param ownerCtx - caller context that owns the Agent lifecycle.
+ 	* @param options - acquired Session/write handle, loop options, start source, parent Agent, setup, and cancellation.
+ 	* @returns the initialized Agent and its shared disposer.
  	*/
 +	dshGoDeletionVersion = 1;
 +	async dshGoDisposeForDeletion(id) {
@@ -160,20 +161,18 @@
 +		agent.dshGoDeleting = true;
 +		await agent.dshGoDispose();
 +	}
- 	prepare(ownerCtx, id, options, session, callerSignal, handle, parentAgent) {
+ 	async initializeAgent(ownerCtx, options) {
+ 		const { session, agentOptions, source, stored, setup, signal: callerSignal, parentAgent } = options;
+ 		const id = session.id;
 +		ownerCtx.get("sessionPersistence")?.dshGoDeletion?.assertAdmit(id);
 +		if (parentAgent !== void 0) ownerCtx.get("sessionPersistence")?.dshGoDeletion?.assertAdmit(parentAgent.id);
- 		assertAgentOptions(options);
- 		ownerCtx.fiber.assertActive();
- 		/* v8 ignore next -- unreachable backstop, see above */
-@@ -1779,6 +1799,7 @@
+@@ -1561,5 +1575,6 @@
  			/* v8 ignore next -- a synchronous effect exhausts the generator before returning */
  			if (machine === void 0) throw new Error(`agent "${id}" lifecycle did not construct its driver`);
  			const agent = machine;
 +			agent.dshGoDispose = dispose;
  			assertLive();
- 			return {
- 				agent,
+ 			return await agent.runMaintenance(async () => {
 --- a/node_modules/@deepseek-ai/dsh-session-projection-cache/lib/index.js
 +++ b/node_modules/@deepseek-ai/dsh-session-projection-cache/lib/index.js
 @@ -166,6 +166,7 @@
@@ -263,33 +262,20 @@
  		const persistedRows = db.prepare("SELECT id, revision, generation FROM persisted_sessions").all();
 --- a/node_modules/@deepseek-ai/dsh-schedule/lib/index.js
 +++ b/node_modules/@deepseek-ai/dsh-schedule/lib/index.js
-@@ -8,6 +8,7 @@
- import { SessionId, SessionLogOffset } from "@deepseek-ai/dsh-session";
+@@ -12,3 +12,4 @@
  import { z as z$1 } from "zod";
  import { MessageId } from "@deepseek-ai/dsh-llm/brand";
 +import { readFile } from "node:fs/promises";
  import { defineDomain, domainTable } from "@deepseek-ai/dsh-storage-domain";
- import { isDeepStrictEqual } from "node:util";
- //#region lib/types/domain.js
-@@ -2098,6 +2099,7 @@
- 				if (refusal !== void 0) throw new ScheduleInputError("subagent_session", refusal.message);
+@@ -2239,5 +2239,6 @@
  				const domain = await this.getDomain();
  				signal?.throwIfAborted();
-+				this.ctx.sessionPersistence.dshGoDeletion?.assertAdmit(sessionId);
- 				await domain.table("tasks").put(id, {
- 					sessionId,
- 					record,
-@@ -2252,6 +2254,7 @@
- 		* @returns The stable refusal for a delegated child's Session, or undefined when the Session is eligible.
- 		*/
- 		reminderTargetRefusal(sessionId) {
-+			this.ctx.sessionPersistence.dshGoDeletion?.assertAdmit(sessionId);
- 			const agent = this.ctx.agents.get(sessionId);
- 			if (agent === void 0 || delegationDepthOf(agent) === 0) return void 0;
- 			return {
-@@ -2290,9 +2293,29 @@
- 				if (failure !== void 0) throw failure;
- 			});
+ 				await this.validateTarget(target, signal);
+ 				signal?.throwIfAborted();
++				if (target.sessionId !== void 0) this.ctx.sessionPersistence.dshGoDeletion?.assertAdmit(target.sessionId);
+ 				const createdAt = new Date(now).toISOString();
+@@ -2616,8 +2616,28 @@
+ 			return removed;
  		}
 +		dshGoDeletionVersion = 1;
 +		async dshGoInspectDeletion(id) {
@@ -352,10 +338,10 @@
  		await this.indexHeaders(await this.listStoredHeaders());
 --- a/node_modules/@deepseek-ai/dsh-storage-json/lib/index.js
 +++ b/node_modules/@deepseek-ai/dsh-storage-json/lib/index.js
-@@ -263,6 +263,19 @@
+@@ -277,6 +277,19 @@
  		return records;
  	}
- 	publish() {
+ 	async publish() {
 +		const seam = this.dshGoDeletion?.();
 +		if (seam !== void 0) {
 +			if (this.descriptor.name === "schedule") {

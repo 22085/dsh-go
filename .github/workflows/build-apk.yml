@@ -1,6 +1,8 @@
 name: Build APK (arm64)
 
 # Personal build workflow for a fork of dsh-Go: builds the arm64 runtime
+# dsh 0.2.2-rc.1: the runtime step runs with DSH_VERSION=0.2.2-rc.1
+# (adapted patches + pins + lock are committed in runtime/).
 # and the release arm64 APK, then uploads the APK as a workflow artifact.
 # Upstream CI only runs tests, so this workflow is added on the fork only.
 on:
@@ -47,7 +49,7 @@ jobs:
         # refused download does not kill the whole run.
         run: |
           for attempt in 1 2 3; do
-            if bash runtime/build-runtime.sh arm64-v8a; then
+            if DSH_VERSION=0.2.2-rc.1 bash runtime/build-runtime.sh arm64-v8a; then
               break
             fi
             echo "runtime build attempt $attempt failed, retrying in 30s"

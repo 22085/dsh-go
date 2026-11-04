@@ -218,9 +218,10 @@
  					exitCode = 1;
  					const restoration = repaired.exitCode === 0 ? "restored package.json, pnpm-lock.yaml, and node_modules" : "restored package.json and pnpm-lock.yaml, but node_modules could not be reinstalled; run 'dsh plugin install'";
  					const diagnostic = `\ndsh: installation rejected: ${warnings.join("\n")}\ndsh: ${restoration}.\n`;
-@@ -761,11 +879,38 @@
- 					append(Buffer.from(diagnostic));
- 				} else if (options.activateNewBundles !== false) await reconcile(before, dir, context.installAnchor, options);
+@@ -870,12 +870,39 @@
+ 						append(Buffer.from(diagnostic));
+ 					}
+ 				}
  			}
 +			completed = true;
  		} finally {
@@ -279,8 +280,9 @@
  						if (stopped()) throw new InstallCancelledError();
  						result.registries.push(registry);
  						used = registry;
-@@ -2035,7 +2184,7 @@
- 							spec,
+@@ -2802,8 +2802,8 @@
+ 							"add",
+ 							installSpec,
  							...options?.saveExact === true ? ["--save-exact"] : [],
  							...registryArguments(registry)
 -						], control.abort.signal, requestId);

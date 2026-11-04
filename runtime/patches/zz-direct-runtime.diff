@@ -54,8 +54,8 @@
  	* @returns its effective absolute directory.
  	*/
  	get(session) {
--		return this.ctx.sessionProjections.stateOf(session, "workingDirectory") ?? this.defaultDirectory;
-+		const directory = this.ctx.sessionProjections.stateOf(session, "workingDirectory") ?? this.defaultDirectory;
+-		return this.workingDirectoryProjectionHandle.stateOf(session) ?? this.defaultDirectory;
++		const directory = this.workingDirectoryProjectionHandle.stateOf(session) ?? this.defaultDirectory;
 +		return globalThis[Symbol.for("dsh.go.direct")]?.toHost(directory) ?? directory;
  	}
  	/**
@@ -110,7 +110,7 @@
  /** Preserve execution-world spelling; enforcing providers resolve filesystem identity on their host. */
  function resolveWorkspaceRoot(path) {
 +	path = globalThis[Symbol.for("dsh.go.direct")]?.toHost(path) ?? path;
- 	if (!isAbsolute(path)) throw new Error("sandbox-policy: workspace root must be an absolute execution-world path");
+ 	if (!isAbsolute(path) || path.includes("\0")) throw new Error("sandbox-policy: workspace root must be an absolute execution-world path without NUL bytes");
  	return path;
  }
 --- a/node_modules/@deepseek-ai/dsh-sandbox/lib/index.js

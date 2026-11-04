@@ -1,10 +1,11 @@
 # DSH rc4: refresh changed cold projection records without cross-process write-back.
 --- a/node_modules/@deepseek-ai/dsh-api-session-controller/lib/index.js
 +++ b/node_modules/@deepseek-ai/dsh-api-session-controller/lib/index.js
-@@ -1898,6 +1898,8 @@
+@@ -1,7 +1,9 @@
  var ApiSessionList = class {
  	ctx;
  	workSliceMs;
+ 	listMetadata;
 +	// Read-only fallback summaries for the current cold set; persistence owns revisions.
 +	coldHints = new Map();
  	/**
@@ -138,14 +139,14 @@
  			await this.host.unit.putRecord(this.tableName, key, value);
  			this.records.set(key, value);
  			this.emitPut(key, value);
-@@ -264,6 +285,7 @@
+@@ -277,6 +277,7 @@
  	delete(key) {
  		return this.host.enqueue(async () => {
  			if (!this.records.has(key)) return false;
 +			this.recordStamps.delete(key);
  			await this.host.unit.deleteRecord(this.tableName, key);
  			this.records.delete(key);
- 			this.host.emitChanged({
+ 			this.emitDeleted(key);
 @@ -279,6 +301,7 @@
  		return this.host.enqueue(async () => {
  			if (!this.records.has(key)) throw new DomainError("missing-key", `domain '${this.host.domainName}' table '${this.tableName}' has no record '${key}' to update`);

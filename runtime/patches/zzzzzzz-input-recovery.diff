@@ -53,15 +53,15 @@
  * Driver-owned durable Inbox implementation used by ReactLoopAgent and focused
 @@ -84,6 +87,10 @@
  	get nextStep() {
- 		return this.current()["next-step"];
+ 		return this.readState()["next-step"];
  	}
 +	/** Unadmitted identities held by the driver, including a failed restore. */
 +	get claimed() {
-+		return this.current().inFlight.map(({ message }) => message);
++		return this.readState().inFlight.map(({ message }) => message);
 +	}
  	/** Whether either pending-message list contains work. */
  	get hasPending() {
- 		const state = this.current();
+ 		const state = this.readState();
 @@ -158,6 +165,25 @@
  	*/
  	splice(target, start, deleteCount, inserted) {
@@ -79,7 +79,7 @@
 +	}
 +	/** Restore only unadmitted claims, in original target/order, without waking the driver. */
 +	recover() {
-+		const claims = this.current().inFlight;
++		const claims = this.readState().inFlight;
 +		for (const target of ["next-step", "next-turn"]) {
 +			const messages = claims.filter((claim) => claim.target === target).map((claim) => claim.message);
 +			if (messages.length > 0) this.splice(target, 0, 0, messages);
@@ -142,16 +142,18 @@
  			}
  		}
  	}
-@@ -924,6 +968,9 @@
- 				messages: context === void 0 ? claimed : [...claimed, context]
+@@ -701,8 +701,11 @@
+ 					messages: context === void 0 ? claimed : [...claimed, context]
+ 				});
  			});
- 		});
-+		// A returned reject/filter is intentional consumption, not a preparation failure.
-+		const retained = new Set(decision.kind === "reject" ? [] : decision.messages.filter((message) => message.source.kind !== "runtime-context").map((message) => message.id));
-+		this.inbox.settle(claimed.filter((message) => !retained.has(message.id)).map((message) => message.id));
- 		signal.throwIfAborted();
- 		if (decision.kind === "reject") return decision;
- 		return {
++			// A returned reject/filter is intentional consumption, not a preparation failure.
++			const retained = new Set(decision.kind === "reject" ? [] : decision.messages.filter((message) => message.source.kind !== "runtime-context").map((message) => message.id));
++			this.inbox.settle(claimed.filter((message) => !retained.has(message.id)).map((message) => message.id));
+ 			signal.throwIfAborted();
+ 			if (decision.kind === "reject") {
+ 				toolSet.dispose();
+ 				return decision;
+ 			}
 @@ -1031,6 +1078,18 @@
  			};
  			this.throwError(error);

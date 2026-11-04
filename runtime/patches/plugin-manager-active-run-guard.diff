@@ -1,33 +1,28 @@
+# dsh-go: guard plugin-manager changes against an earlier package tree outliving
+# its Host and the profile lock (active recorded run). Adapted for dsh 0.2.2-rc.1:
+# change() now takes an identity 4th argument, so the cancellation callback is
+# passed as a 5th argument instead of reusing the 4th.
 --- a/node_modules/@deepseek-ai/dsh-plugin-manager/lib/index.js
 +++ b/node_modules/@deepseek-ai/dsh-plugin-manager/lib/index.js
-@@ -2097,7 +2097,7 @@
+@@ -1,6 +1,6 @@
+ 				});
+ 			}, {
  				stage: "install",
  				target: spec,
  				enabled: options?.enabled !== false
 -			}, "install");
-+			}, "install", stopped);
- 			control.result = result;
- 			return result.finally(() => {
- 				if (requestId !== void 0) this.installs.delete(requestId);
-@@ -2372,7 +2372,7 @@
- 				restartReason: restart
- 			};
- 		}
--		async change(operation, request, reason) {
-+		async change(operation, request, reason, isCancelled) {
- 			return withFileLock(join(this.profile.dir, "package.json"), async () => {
- 				this.abort.signal.throwIfAborted();
- 				const before = this.diskState();
-@@ -2385,6 +2385,12 @@
- 					}
- 				};
- 				try {
-+					if (isCancelled?.()) throw new InstallCancelledError();
-+					// An earlier package tree may outlive its Host and the profile lock.
-+					const active = await activeRecordedRun(this.profile.dir);
-+					if (isCancelled?.()) throw new InstallCancelledError();
-+					this.abort.signal.throwIfAborted();
-+					if (active !== void 0) throw new Error(active);
- 					const outcome = await operation(result);
- 					if (outcome !== void 0) result.application = outcome;
- 					else if (result.application === "applied" && result.restartReason !== void 0) result.application = "restart-required";
++			}, "install", void 0, stopped);
+@@ -1,1 +1,1 @@
+-		async change(operation, request, reason, identity) {
++		async change(operation, request, reason, identity, isCancelled) {
+@@ -1,4 +1,10 @@
+ 					};
+ 					try {
++						if (isCancelled?.()) throw new InstallCancelledError();
++						// An earlier package tree may outlive its Host and the profile lock.
++						const active = await activeRecordedRun(this.profile.dir);
++						if (isCancelled?.()) throw new InstallCancelledError();
++						this.abort.signal.throwIfAborted();
++						if (active !== void 0) throw new Error(active);
+ 						const outcome = await operation(result);
+ 						if (outcome !== void 0) result.application = outcome;

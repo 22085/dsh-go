@@ -10,7 +10,7 @@
  	static inject = ["loader", "profileContext"];
  	constructor(ownerContext) {
  		super(ownerContext, "configEditor");
-@@ -100,9 +102,11 @@
+@@ -100,8 +102,10 @@
  				if (!this.entries().includes(entry)) throw new Error("Configuration entry changed during reload");
  				const current = structuredClone(entry.options.config ?? {});
  				const inherited = this.inherited(entry, loadProfileDirectory("dsh", this.ownerContext.profileContext.dir, this.ownerContext.profileContext.installAnchor));
@@ -21,6 +21,5 @@
 +				// Existing synchronous change callbacks keep their return-value contract.
 +				const next = await change(current, inherited);
 +				if (!this.entries().includes(entry) || entry.fiber !== fiber || fiber?.state !== 2) throw new Error("Configuration plugin is no longer active");
- 				const resolved = fiber.ctx.waterfall(fiber, "internal/config", next, () => next);
- 				resolveConfig(fiber.runtime, resolved);
+ 				fiber.resolveConfig(next);
  				let before;
