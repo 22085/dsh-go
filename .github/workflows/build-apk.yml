@@ -1,0 +1,37 @@
+name: Build APK (arm64)
+
+# Personal build workflow for a fork of dsh-Go: builds the arm64 runtime
+# and the release arm64 APK, then uploads the APK as a workflow artifact.
+# Upstream CI only runs tests, so this workflow is added on the fork only.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install zstd
+        run: sudo apt-get update -q && sudo apt-get install -yq zstd
+      - name: Bump proot pin
+        # Termux's index no longer carries proot 5.1.107.98; 5.1.107.102 is
+        # the current aarch64 build. Without this, runtime/build-runtime.sh
+        # fails at the Termux step.
+        run: sed -i 's/5.1.107.98/5.1.107.102/' runtime/build-runtime.sh
+      - name: Build runtime and APK
+        run: |
+          bash tooling/setup-toolchain.sh
+          source tooling/env.sh
+          bash runtime/build-runtime.sh arm64-v8a
+          DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsh-go-arm64-apk
+          path: app/build/app/outputs/flutter-apk/app-arm64-release.apk
+          if-no-files-found: error
+          retention-days: 7
