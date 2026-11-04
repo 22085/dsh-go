@@ -5942,6 +5942,150 @@ abstract class L10n {
   /// **'写不进去：本机运行时还没装好'**
   String get diagnosticsForAiFailed;
 
+  /// No description provided for @certGenAlias.
+  ///
+  /// In zh, this message translates to:
+  /// **'别名'**
+  String get certGenAlias;
+
+  /// No description provided for @certGenCommonName.
+  ///
+  /// In zh, this message translates to:
+  /// **'通用名称'**
+  String get certGenCommonName;
+
+  /// No description provided for @certGenCopied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已复制'**
+  String get certGenCopied;
+
+  /// No description provided for @certGenDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'生成 2048 或 4096 位 RSA 自签名证书，保存到“下载”文件夹，文件名为 <别名>.p12（可改名为 .keystore）。下面的 SHA1 和 SHA256 就是安卓平台注册要填的指纹。'**
+  String get certGenDescription;
+
+  /// No description provided for @certGenExpiry.
+  ///
+  /// In zh, this message translates to:
+  /// **'到期'**
+  String get certGenExpiry;
+
+  /// No description provided for @certGenFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'生成失败'**
+  String get certGenFailed;
+
+  /// No description provided for @certGenFilename.
+  ///
+  /// In zh, this message translates to:
+  /// **'文件'**
+  String get certGenFilename;
+
+  /// No description provided for @certGenGenerate.
+  ///
+  /// In zh, this message translates to:
+  /// **'生成证书'**
+  String get certGenGenerate;
+
+  /// No description provided for @certGenGenerating.
+  ///
+  /// In zh, this message translates to:
+  /// **'生成中…'**
+  String get certGenGenerating;
+
+  /// No description provided for @certGenKeySize.
+  ///
+  /// In zh, this message translates to:
+  /// **'密钥长度'**
+  String get certGenKeySize;
+
+  /// No description provided for @certGenOrganization.
+  ///
+  /// In zh, this message translates to:
+  /// **'组织'**
+  String get certGenOrganization;
+
+  /// No description provided for @certGenPassword.
+  ///
+  /// In zh, this message translates to:
+  /// **'密码'**
+  String get certGenPassword;
+
+  /// No description provided for @certGenPasswordHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'至少 6 位，只用来保护证书文件，不会被保存'**
+  String get certGenPasswordHint;
+
+  /// No description provided for @certGenPasswordTooShort.
+  ///
+  /// In zh, this message translates to:
+  /// **'密码至少 6 位'**
+  String get certGenPasswordTooShort;
+
+  /// No description provided for @certGenResult.
+  ///
+  /// In zh, this message translates to:
+  /// **'已生成'**
+  String get certGenResult;
+
+  /// No description provided for @certGenSavedToDownloads.
+  ///
+  /// In zh, this message translates to:
+  /// **'已保存到下载文件夹'**
+  String get certGenSavedToDownloads;
+
+  /// No description provided for @certGenSha1.
+  ///
+  /// In zh, this message translates to:
+  /// **'SHA1'**
+  String get certGenSha1;
+
+  /// No description provided for @certGenSha256.
+  ///
+  /// In zh, this message translates to:
+  /// **'SHA256'**
+  String get certGenSha256;
+
+  /// No description provided for @certGenSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'在本机生成自签名证书'**
+  String get certGenSummary;
+
+  /// No description provided for @certGenTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'证书生成'**
+  String get certGenTitle;
+
+  /// No description provided for @certGenValidityYears.
+  ///
+  /// In zh, this message translates to:
+  /// **'有效期（年）'**
+  String get certGenValidityYears;
+
+  /// No description provided for @certGenCopySha1.
+  ///
+  /// In zh, this message translates to:
+  /// **'复制 SHA1'**
+  String get certGenCopySha1;
+
+  /// No description provided for @certGenCopySha256.
+  ///
+  /// In zh, this message translates to:
+  /// **'复制 SHA256'**
+  String get certGenCopySha256;
+
+  /// No description provided for @certGenRandomPassword.
+  ///
+  /// In zh, this message translates to:
+  /// **'随机'**
+  String get certGenRandomPassword;
+
   /// No description provided for @chatBackgroundTaskNotice.
   ///
   /// In zh, this message translates to:

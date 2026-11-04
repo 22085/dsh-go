@@ -50,6 +50,7 @@ class MainActivity : FlutterActivity() {
             engine.plugins.add(SharePlugin())
             engine.plugins.add(ShortcutsPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.diagnostics.DiagnosticsPlugin())
+            engine.plugins.add(io.github.ccch1mneyyy.dsh_app.cert.CertPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.media.MediaPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.icons.LauncherIconPlugin())
             engine.plugins.add(io.github.ccch1mneyyy.dsh_app.theme.DynamicColorPlugin())

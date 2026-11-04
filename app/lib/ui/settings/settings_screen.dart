@@ -50,6 +50,7 @@ import '../theme/theme.dart';
 import '../update/update_tiles.dart' show UpdateBadge;
 import 'about_page.dart';
 import 'appearance/appearance_page.dart';
+import 'cert_gen_page.dart';
 import 'background_guide_page.dart';
 import 'diagnostics_page.dart';
 import 'interface_page.dart';
@@ -311,6 +312,15 @@ class SettingsScreen extends ConsumerWidget {
               tint: SettingsHues.help,
               spot: SettingsIndex.entry(SettingsPageId.diagnostics),
               onTap: () => _push(context, const DiagnosticsPage()),
+            ),
+            // Certificate generator: a plain title row (no search spot yet),
+            // next to Diagnostics in the Help group.
+            SettingsTile(
+              icon: AppIcons.redacted,
+              tint: SettingsHues.help,
+              title: l10n.certGenTitle,
+              subtitle: l10n.certGenSummary,
+              onTap: () => _push(context, const CertGenPage()),
             ),
             SettingsTile(
               icon: AppIcons.info,

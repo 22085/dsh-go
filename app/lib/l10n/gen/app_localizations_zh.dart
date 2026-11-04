@@ -3215,6 +3215,79 @@ class L10nZh extends L10n {
   String get diagnosticsForAiFailed => '写不进去：本机运行时还没装好';
 
   @override
+  String get certGenAlias => '别名';
+
+  @override
+  String get certGenCommonName => '通用名称';
+
+  @override
+  String get certGenCopied => '已复制';
+
+  @override
+  String get certGenDescription =>
+      '生成 2048 或 4096 位 RSA 自签名证书，保存到“下载”文件夹，文件名为 <别名>.p12（可改名为 .keystore）。下面的 SHA1 和 SHA256 就是安卓平台注册要填的指纹。';
+
+  @override
+  String get certGenExpiry => '到期';
+
+  @override
+  String get certGenFailed => '生成失败';
+
+  @override
+  String get certGenFilename => '文件';
+
+  @override
+  String get certGenGenerate => '生成证书';
+
+  @override
+  String get certGenGenerating => '生成中…';
+
+  @override
+  String get certGenKeySize => '密钥长度';
+
+  @override
+  String get certGenOrganization => '组织';
+
+  @override
+  String get certGenPassword => '密码';
+
+  @override
+  String get certGenPasswordHint => '至少 6 位，只用来保护证书文件，不会被保存';
+
+  @override
+  String get certGenPasswordTooShort => '密码至少 6 位';
+
+  @override
+  String get certGenResult => '已生成';
+
+  @override
+  String get certGenSavedToDownloads => '已保存到下载文件夹';
+
+  @override
+  String get certGenSha1 => 'SHA1';
+
+  @override
+  String get certGenSha256 => 'SHA256';
+
+  @override
+  String get certGenSummary => '在本机生成自签名证书';
+
+  @override
+  String get certGenTitle => '证书生成';
+
+  @override
+  String get certGenValidityYears => '有效期（年）';
+
+  @override
+  String get certGenCopySha1 => '复制 SHA1';
+
+  @override
+  String get certGenCopySha256 => '复制 SHA256';
+
+  @override
+  String get certGenRandomPassword => '随机';
+
+  @override
   String get chatBackgroundTaskNotice => '后台任务通知';
 
   @override

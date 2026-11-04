@@ -36,7 +36,10 @@ android {
     }
 
     defaultConfig {
-        applicationId = "io.github.ccch1mneyyy.dsh_app"
+        // Personal build only: the install identity moves to the user's new
+        // package; namespace above stays, so the Kotlin package and R class
+        // do not move.
+        applicationId = "com.kjh.bnm.mm"
         // java.nio.file (symlinks while unpacking the rootfs) needs API 26.
         minSdk = 26
         // Target 28 like Termux, so the API 29+ exec restriction on app-private

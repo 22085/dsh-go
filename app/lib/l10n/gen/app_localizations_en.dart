@@ -3375,6 +3375,79 @@ class L10nEn extends L10n {
   String get diagnosticsForAiFailed => 'Not written: the local runtime is not installed';
 
   @override
+  String get certGenAlias => 'Alias';
+
+  @override
+  String get certGenCommonName => 'Common name';
+
+  @override
+  String get certGenCopied => 'Copied';
+
+  @override
+  String get certGenDescription =>
+      'Generates a 2048 or 4096-bit RSA self-signed certificate and saves it to Downloads as <alias>.p12 (it can be renamed to .keystore). The SHA1 and SHA256 fingerprints below are what Android platform registration asks for.';
+
+  @override
+  String get certGenExpiry => 'Expires';
+
+  @override
+  String get certGenFailed => 'Generation failed';
+
+  @override
+  String get certGenFilename => 'File';
+
+  @override
+  String get certGenGenerate => 'Generate certificate';
+
+  @override
+  String get certGenGenerating => 'Generating…';
+
+  @override
+  String get certGenKeySize => 'Key size';
+
+  @override
+  String get certGenOrganization => 'Organization';
+
+  @override
+  String get certGenPassword => 'Password';
+
+  @override
+  String get certGenPasswordHint => 'At least 6 characters; it protects the keystore and is never stored';
+
+  @override
+  String get certGenPasswordTooShort => 'Password must be at least 6 characters';
+
+  @override
+  String get certGenResult => 'Generated';
+
+  @override
+  String get certGenSavedToDownloads => 'Saved to Downloads';
+
+  @override
+  String get certGenSha1 => 'SHA1';
+
+  @override
+  String get certGenSha256 => 'SHA256';
+
+  @override
+  String get certGenSummary => 'Generate a self-signed certificate on this phone';
+
+  @override
+  String get certGenTitle => 'Certificate generator';
+
+  @override
+  String get certGenValidityYears => 'Validity (years)';
+
+  @override
+  String get certGenCopySha1 => 'Copy SHA1';
+
+  @override
+  String get certGenCopySha256 => 'Copy SHA256';
+
+  @override
+  String get certGenRandomPassword => 'Random';
+
+  @override
   String get chatBackgroundTaskNotice => 'Background task notice';
 
   @override
