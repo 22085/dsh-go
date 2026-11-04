@@ -58,6 +58,22 @@ jobs:
               exit 1
             fi
           done
+      - name: Set up release signing
+        # The app's build.gradle.kts already signs release with key.properties
+        # when it exists, and falls back to debug without it. The keystore and
+        # passwords live only in this repo's Actions secrets, never in the repo.
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/android/release.keystore
+          cat > app/android/key.properties <<EOF
+          storeFile=release.keystore
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyAlias=dshgo
+          keyPassword=$ANDROID_KEY_PASSWORD
+          EOF
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
       - name: Build APK
         run: DSH_BETA_TOKEN_FILE= bash tooling/build-apk.sh -f arm64
       - name: Upload APK
