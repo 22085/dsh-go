@@ -63,7 +63,7 @@ jobs:
         # when it exists, and falls back to debug without it. The keystore and
         # passwords live only in this repo's Actions secrets, never in the repo.
         run: |
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/android/release.keystore
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/android/app/release.keystore
           cat > app/android/key.properties <<EOF
           storeFile=release.keystore
           storePassword=$ANDROID_KEYSTORE_PASSWORD
